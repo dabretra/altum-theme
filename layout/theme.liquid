@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{{ page_title }} – {{ shop.name }}</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ content_for_header }}
+  </head>
+  <body class="altum-body">
+    {% section 'header' %}
+
+    <main class="altum-main" role="main">
+      {{ content_for_layout }}
+    </main>
+
+    {% section 'footer' %}
+    <script src="{{ 'theme.js' | asset_url }}" defer></script>
+  </body>
+</html>

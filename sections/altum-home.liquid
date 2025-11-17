@@ -1,0 +1,104 @@
+<section class="altum-home">
+
+  {%- comment -%} HERO {%- endcomment -%}
+  <div class="altum-home__hero">
+    <div class="altum-home__hero-text">
+      <p class="altum-eyebrow">Colorado-made candles & gear, refined</p>
+      <h1>Explore the heights of adventure. Sink into the depths of comfort.</h1>
+      <p>
+        Altum crafts small-batch candles, easy-wearing apparel, and functional gear—
+        made in Colorado for people who chase big days outside and still care
+        about how it feels at home.
+      </p>
+
+      <div class="altum-home__hero-actions">
+        <a class="btn btn--primary" href="/collections/candles">Shop candles</a>
+        <a class="btn btn--secondary" href="/collections/apparel">Explore apparel</a>
+      </div>
+    </div>
+
+    <div class="altum-home__hero-card">
+      <p class="altum-eyebrow">Key scent</p>
+      <h2>Black Rose + Oud</h2>
+      <p>8oz soy wax in amber glass. Poured in Colorado to smell like moody alpine nights.</p>
+    </div>
+  </div>
+
+  {%- comment -%} CATEGORY CARDS {%- endcomment -%}
+  <div class="altum-home__categories">
+    <article class="altum-card">
+      <p class="altum-eyebrow">Restore</p>
+      <h3>Colorado-made candles</h3>
+      <p>Clean-burning soy candles poured in amber jars—built for recovery nights after big days.</p>
+      <a href="/collections/candles" class="card-link">Shop candles →</a>
+    </article>
+
+    <article class="altum-card">
+      <p class="altum-eyebrow">Apparel</p>
+      <h3>Hoodies & shirts</h3>
+      <p>Soft, durable layers that move from coffee runs to evening walks with the dog.</p>
+      <a href="/collections/apparel" class="card-link">Shop apparel →</a>
+    </article>
+
+    <article class="altum-card">
+      <p class="altum-eyebrow">Gear & Racks</p>
+      <h3>Climbing & ski storage</h3>
+      <p>Wall racks and trail-ready pieces that keep your kit organized and adventure-ready.</p>
+      <a href="/collections/gear" class="card-link">Shop gear →</a>
+    </article>
+  </div>
+
+  {%- comment -%} FEATURED COLLECTION (use a collection handle) {%- endcomment -%}
+  {% assign featured_collection = collections['front-range-favorites'] %}
+  {% if featured_collection and featured_collection.products_count > 0 %}
+    <section class="altum-home__featured">
+      <div class="altum-home__featured-header">
+        <h2>Featured picks</h2>
+        <p>A short list of candles, apparel, and gear we’re reaching for right now.</p>
+      </div>
+
+      <div class="altum-grid altum-grid--products">
+        {% for product in featured_collection.products limit: 8 %}
+          <article class="altum-product-card">
+            <a href="{{ product.url }}">
+              {% if product.featured_image %}
+                <img
+                  src="{{ product.featured_image | image_url: width: 600 }}"
+                  alt="{{ product.title | escape }}">
+              {% endif %}
+              <h3>{{ product.title }}</h3>
+            </a>
+            <p class="altum-product-card__price">
+              {{ product.price | money }}
+            </p>
+          </article>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  {%- comment -%} STORY STRIP {%- endcomment -%}
+  <section class="altum-home__story">
+    <div class="altum-story__text">
+      <h2>Why we started Altum</h2>
+      <p>
+        We wanted gear and goods that felt as intentional as the days we spend outside:
+        candles that turn a living room into basecamp, hoodies worn from work to trailhead,
+        and storage that keeps skis, boards, and ropes ready for the next lap.
+      </p>
+    </div>
+
+    <div class="altum-story__people">
+      <div>
+        <h3>Killian</h3>
+        <p class="altum-eyebrow">Co-founder</p>
+        <p>Grew up in New Jersey and moved west for the mountains and dry trails. Obsessed with the details that make gear feel just right.</p>
+      </div>
+      <div>
+        <h3>Dan</h3>
+        <p class="altum-eyebrow">Co-founder</p>
+        <p>Originally from Minnesota, moved to Colorado in 2016. Splits time between testing gear and pouring candles that smell like Colorado nights.</p>
+      </div>
+    </div>
+  </section>
+</section>

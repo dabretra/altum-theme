@@ -1,0 +1,34 @@
+<header class="altum-header">
+  <div class="altum-header__inner">
+    <a href="{{ routes.root_url }}" class="altum-header__brand">
+      {% if settings.logo %}
+        <img src="{{ settings.logo | image_url: width: 180 }}"
+             alt="{{ shop.name | escape }}"
+             class="altum-header__logo">
+      {% else %}
+        <span class="altum-header__logo-text">{{ settings.logo_text }}</span>
+      {% endif %}
+    </a>
+
+    <button class="altum-header__toggle" aria-label="Toggle navigation">
+      <span></span><span></span>
+    </button>
+
+    <nav class="altum-nav" aria-label="Main navigation">
+      <a href="{{ routes.root_url }}">Home</a>
+      <a href="/collections/candles">Candles</a>
+      <a href="/collections/apparel">Apparel</a>
+      <a href="/collections/gear">Gear</a>
+      <a href="/collections/racks">Racks</a>
+      <a href="/collections/art">Art</a>
+      <a href="/pages/about">About</a>
+    </nav>
+
+    <div class="altum-header__actions">
+      <a href="{{ routes.search_url }}" aria-label="Search">Search</a>
+      <a href="{{ routes.cart_url }}" aria-label="Cart">
+        Cart ({{ cart.item_count }})
+      </a>
+    </div>
+  </div>
+</header>

@@ -1,0 +1,44 @@
+<footer class="altum-footer">
+  <div class="altum-footer__inner">
+    <div>
+      <h3>Altum</h3>
+      <p>Colorado-made candles, apparel, and gear for people who live between summits and cozy nights in.</p>
+    </div>
+
+    <div>
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="/collections/candles">Candles</a></li>
+        <li><a href="/collections/apparel">Apparel</a></li>
+        <li><a href="/collections/gear">Climbing & gear</a></li>
+        <li><a href="/collections/racks">Ski & board racks</a></li>
+        <li><a href="/collections/art">Art</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>About</h4>
+      <ul>
+        <li><a href="/pages/about">Our story</a></li>
+        <li><a href="/policies/shipping-policy">Shipping</a></li>
+        <li><a href="/policies/refund-policy">Returns</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Stay in the loop</h4>
+      <p>Be first to know about new pours, drops, and limited runs.</p>
+      {% form 'customer' %}
+        <input type="email"
+               name="contact[email]"
+               placeholder="Email address"
+               required>
+        <button type="submit">Join the list</button>
+      {% endform %}
+    </div>
+  </div>
+
+  <div class="altum-footer__bottom">
+    <span>© {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</span>
+  </div>
+</footer>
