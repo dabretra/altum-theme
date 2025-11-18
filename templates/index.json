@@ -22,7 +22,7 @@
             "heading": "Featured products",
             "subheading": "Discover our latest collection",
             "heading_alignment": "center",
-            "collection": "",
+            "collection": "altum-merch",
             "products_limit": 12,
             "card_width": 280,
             "product_gap": 20,
