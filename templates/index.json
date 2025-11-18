@@ -45,11 +45,7 @@
         "ai_gen_block_0e88b61_CD8yR9": {
           "type": "ai_gen_block_0e88b61",
           "settings": {
-            "product_list": [
-              "core-fleece-pullover-hoodie",
-              "black-rose-oud-candle-8oz-amber-jar",
-              "non-woven-drawstring-backpack"
-            ],
+            "product_list": [],
             "images_per_product": 3,
             "image_cycle_speed": 3,
             "slide_width": 250,
