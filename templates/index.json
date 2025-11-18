@@ -1,11 +1,56 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
+    "17634355345abab831": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_d7eb69b_ejQ8cX": {
+          "type": "ai_gen_block_d7eb69b",
+          "settings": {
+            "heading": "Featured products",
+            "subheading": "Discover our latest collection",
+            "heading_alignment": "center",
+            "collection": "altum-merch",
+            "products_to_show": 12,
+            "card_width": 280,
+            "product_gap": 20,
+            "section_padding": 50,
+            "card_border_radius": 8,
+            "background_color": "#ffffff",
+            "heading_color": "#000000",
+            "subheading_color": "#666666",
+            "card_background": "#ffffff",
+            "product_title_color": "#000000",
+            "product_price_color": "#000000",
+            "nav_button_color": "#000000",
+            "nav_button_hover_color": "#333333",
+            "nav_button_icon_color": "#ffffff",
+            "heading_size": 36,
+            "subheading_size": 16
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_d7eb69b_ejQ8cX"
+      ],
+      "settings": {}
+    },
     "main": {
       "type": "altum-home",
       "settings": {}
     }
   },
   "order": [
+    "17634355345abab831",
     "main"
   ]
 }
