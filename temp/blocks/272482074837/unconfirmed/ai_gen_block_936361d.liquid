@@ -1,6 +1,693 @@
+{% doc %}
+  @prompt
+    Smart search bar with functionality to look up Products or Collections, Add the ability to add a transparent image to the background of the search bar. 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-smart-search-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    max-width: {{ block.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-smart-search__wrapper-{{ ai_gen_id }} {
+    position: relative;
+  }
+
+  .ai-smart-search__input-container-{{ ai_gen_id }} {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: {{ block.settings.input_bg_color }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+  }
+
+  {% if block.settings.background_image %}
+    .ai-smart-search__input-container-{{ ai_gen_id }}::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('{{ block.settings.background_image | image_url: width: 1200 }}');
+      background-size: {{ block.settings.bg_image_size }};
+      background-position: {{ block.settings.bg_image_position }};
+      background-repeat: no-repeat;
+      opacity: {{ block.settings.bg_image_opacity }};
+      pointer-events: none;
+      z-index: 0;
+    }
+  {% endif %}
+
+  .ai-smart-search__input-container-{{ ai_gen_id }}:focus-within {
+    border-color: {{ block.settings.border_focus_color }};
+  }
+
+  .ai-smart-search__icon-{{ ai_gen_id }} {
+    position: absolute;
+    left: 16px;
+    color: {{ block.settings.icon_color }};
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+  }
+
+  .ai-smart-search__icon-{{ ai_gen_id }} svg {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+  }
+
+  .ai-smart-search__input-{{ ai_gen_id }} {
+    width: 100%;
+    padding: {{ block.settings.input_padding }}px {{ block.settings.input_padding }}px {{ block.settings.input_padding }}px calc({{ block.settings.icon_size }}px + 32px);
+    border: none;
+    background: transparent;
+    font-size: {{ block.settings.font_size }}px;
+    color: {{ block.settings.text_color }};
+    outline: none;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-smart-search__input-{{ ai_gen_id }}::placeholder {
+    color: {{ block.settings.placeholder_color }};
+  }
+
+  .ai-smart-search__clear-{{ ai_gen_id }} {
+    position: absolute;
+    right: 16px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: none;
+    align-items: center;
+    color: {{ block.settings.icon_color }};
+    z-index: 1;
+  }
+
+  .ai-smart-search__clear-{{ ai_gen_id }}.active {
+    display: flex;
+  }
+
+  .ai-smart-search__clear-{{ ai_gen_id }} svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .ai-smart-search__results-{{ ai_gen_id }} {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background-color: {{ block.settings.results_bg_color }};
+    border: 1px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    max-height: 400px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    display: none;
+  }
+
+  .ai-smart-search__results-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-smart-search__loading-{{ ai_gen_id }} {
+    padding: 20px;
+    text-align: center;
+    color: {{ block.settings.text_color }};
+    font-size: 14px;
+  }
+
+  .ai-smart-search__empty-{{ ai_gen_id }} {
+    padding: 20px;
+    text-align: center;
+    color: {{ block.settings.placeholder_color }};
+    font-size: 14px;
+  }
+
+  .ai-smart-search__section-{{ ai_gen_id }} {
+    padding: 12px 0;
+  }
+
+  .ai-smart-search__section-{{ ai_gen_id }}:not(:last-child) {
+    border-bottom: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-smart-search__section-title-{{ ai_gen_id }} {
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: {{ block.settings.placeholder_color }};
+    letter-spacing: 0.5px;
+  }
+
+  .ai-smart-search__item-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    text-decoration: none;
+    color: {{ block.settings.text_color }};
+    transition: background-color 0.2s ease;
+  }
+
+  .ai-smart-search__item-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.hover_bg_color }};
+  }
+
+  .ai-smart-search__item-image-{{ ai_gen_id }} {
+    width: 50px;
+    height: 50px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: #f4f4f4;
+  }
+
+  .ai-smart-search__item-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-smart-search__item-info-{{ ai_gen_id }} {
+    flex-grow: 1;
+    min-width: 0;
+  }
+
+  .ai-smart-search__item-title-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .ai-smart-search__item-price-{{ ai_gen_id }} {
+    font-size: 13px;
+    color: {{ block.settings.placeholder_color }};
+  }
+
+  .ai-smart-search__item-count-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: {{ block.settings.placeholder_color }};
+  }
+
+  .ai-smart-search__view-all-{{ ai_gen_id }} {
+    display: block;
+    padding: 12px 16px;
+    text-align: center;
+    color: {{ block.settings.link_color }};
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    border-top: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-smart-search__view-all-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.hover_bg_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-smart-search__results-{{ ai_gen_id }} {
+      max-height: 300px;
+    }
+  }
+{% endstyle %}
+
+<smart-search-{{ ai_gen_id }} class="ai-smart-search-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-smart-search__wrapper-{{ ai_gen_id }}">
+    <div class="ai-smart-search__input-container-{{ ai_gen_id }}">
+      <span class="ai-smart-search__icon-{{ ai_gen_id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+      </span>
+      <input
+        type="text"
+        class="ai-smart-search__input-{{ ai_gen_id }}"
+        placeholder="{{ block.settings.placeholder }}"
+        autocomplete="off"
+        aria-label="Search products and collections"
+        aria-autocomplete="list"
+        aria-controls="ai-smart-search-results-{{ ai_gen_id }}"
+      >
+      <button
+        type="button"
+        class="ai-smart-search__clear-{{ ai_gen_id }}"
+        aria-label="Clear search"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div
+      id="ai-smart-search-results-{{ ai_gen_id }}"
+      class="ai-smart-search__results-{{ ai_gen_id }}"
+      role="listbox"
+    ></div>
+  </div>
+</smart-search-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class SmartSearch{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.input = this.querySelector('.ai-smart-search__input-{{ ai_gen_id }}');
+        this.clearBtn = this.querySelector('.ai-smart-search__clear-{{ ai_gen_id }}');
+        this.resultsContainer = this.querySelector('.ai-smart-search__results-{{ ai_gen_id }}');
+        this.searchTimeout = null;
+        this.currentQuery = '';
+      }
+
+      connectedCallback() {
+        this.setupEventListeners();
+      }
+
+      setupEventListeners() {
+        this.input.addEventListener('input', (e) => {
+          const query = e.target.value.trim();
+          
+          if (query.length > 0) {
+            this.clearBtn.classList.add('active');
+          } else {
+            this.clearBtn.classList.remove('active');
+            this.hideResults();
+            return;
+          }
+
+          clearTimeout(this.searchTimeout);
+          
+          if (query.length >= {{ block.settings.min_chars }}) {
+            this.searchTimeout = setTimeout(() => {
+              this.performSearch(query);
+            }, 300);
+          } else {
+            this.hideResults();
+          }
+        });
+
+        this.clearBtn.addEventListener('click', () => {
+          this.input.value = '';
+          this.clearBtn.classList.remove('active');
+          this.hideResults();
+          this.input.focus();
+        });
+
+        document.addEventListener('click', (e) => {
+          if (!this.contains(e.target)) {
+            this.hideResults();
+          }
+        });
+
+        this.input.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            this.hideResults();
+            this.input.blur();
+          }
+        });
+      }
+
+      async performSearch(query) {
+        if (query === this.currentQuery) return;
+        this.currentQuery = query;
+
+        this.showLoading();
+
+        try {
+          const searchParams = new URLSearchParams({
+            q: query,
+            type: 'product,collection',
+            options: {
+              unavailable_products: 'last',
+              fields: 'title,product_type,variants.title,vendor,tag'
+            }
+          });
+
+          const response = await fetch(`/search/suggest.json?${searchParams}`);
+          const data = await response.json();
+
+          this.displayResults(data.resources.results, query);
+        } catch (error) {
+          console.error('Search error:', error);
+          this.showError();
+        }
+      }
+
+      showLoading() {
+        this.resultsContainer.innerHTML = '<div class="ai-smart-search__loading-{{ ai_gen_id }}">Searching...</div>';
+        this.resultsContainer.classList.add('active');
+      }
+
+      showError() {
+        this.resultsContainer.innerHTML = '<div class="ai-smart-search__empty-{{ ai_gen_id }}">An error occurred. Please try again.</div>';
+      }
+
+      hideResults() {
+        this.resultsContainer.classList.remove('active');
+        this.currentQuery = '';
+      }
+
+      displayResults(results, query) {
+        if (!results || (results.products.length === 0 && results.collections.length === 0)) {
+          this.resultsContainer.innerHTML = '<div class="ai-smart-search__empty-{{ ai_gen_id }}">No results found for "' + this.escapeHtml(query) + '"</div>';
+          this.resultsContainer.classList.add('active');
+          return;
+        }
+
+        let html = '';
+
+        if (results.products && results.products.length > 0) {
+          html += '<div class="ai-smart-search__section-{{ ai_gen_id }}">';
+          html += '<div class="ai-smart-search__section-title-{{ ai_gen_id }}">Products</div>';
+          
+          const maxProducts = {{ block.settings.max_products }};
+          results.products.slice(0, maxProducts).forEach(product => {
+            html += this.renderProductItem(product);
+          });
+          
+          html += '</div>';
+        }
+
+        if (results.collections && results.collections.length > 0) {
+          html += '<div class="ai-smart-search__section-{{ ai_gen_id }}">';
+          html += '<div class="ai-smart-search__section-title-{{ ai_gen_id }}">Collections</div>';
+          
+          const maxCollections = {{ block.settings.max_collections }};
+          results.collections.slice(0, maxCollections).forEach(collection => {
+            html += this.renderCollectionItem(collection);
+          });
+          
+          html += '</div>';
+        }
+
+        html += '<a href="/search?q=' + encodeURIComponent(query) + '" class="ai-smart-search__view-all-{{ ai_gen_id }}">View all results</a>';
+
+        this.resultsContainer.innerHTML = html;
+        this.resultsContainer.classList.add('active');
+      }
+
+      renderProductItem(product) {
+        const imageUrl = product.image ? product.image : '';
+        const price = product.price ? this.formatMoney(product.price) : '';
+        
+        return `
+          <a href="${product.url}" class="ai-smart-search__item-{{ ai_gen_id }}" role="option">
+            <div class="ai-smart-search__item-image-{{ ai_gen_id }}">
+              ${imageUrl ? `<img src="${imageUrl}" alt="${this.escapeHtml(product.title)}" loading="lazy">` : ''}
+            </div>
+            <div class="ai-smart-search__item-info-{{ ai_gen_id }}">
+              <div class="ai-smart-search__item-title-{{ ai_gen_id }}">${this.escapeHtml(product.title)}</div>
+              ${price ? `<div class="ai-smart-search__item-price-{{ ai_gen_id }}">${price}</div>` : ''}
+            </div>
+          </a>
+        `;
+      }
+
+      renderCollectionItem(collection) {
+        const imageUrl = collection.image ? collection.image : '';
+        const productCount = collection.products_count || 0;
+        
+        return `
+          <a href="${collection.url}" class="ai-smart-search__item-{{ ai_gen_id }}" role="option">
+            <div class="ai-smart-search__item-image-{{ ai_gen_id }}">
+              ${imageUrl ? `<img src="${imageUrl}" alt="${this.escapeHtml(collection.title)}" loading="lazy">` : ''}
+            </div>
+            <div class="ai-smart-search__item-info-{{ ai_gen_id }}">
+              <div class="ai-smart-search__item-title-{{ ai_gen_id }}">${this.escapeHtml(collection.title)}</div>
+              <div class="ai-smart-search__item-count-{{ ai_gen_id }}">${productCount} ${productCount === 1 ? 'product' : 'products'}</div>
+            </div>
+          </a>
+        `;
+      }
+
+      formatMoney(cents) {
+        const dollars = (cents / 100).toFixed(2);
+        return '{{ cart.currency.symbol }}' + dollars;
+      }
+
+      escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+      }
+    }
+
+    customElements.define('smart-search-{{ ai_gen_id }}', SmartSearch{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Smart search bar",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Search settings"
+    },
+    {
+      "type": "text",
+      "id": "placeholder",
+      "label": "Placeholder text",
+      "default": "Search products and collections..."
+    },
+    {
+      "type": "range",
+      "id": "min_chars",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "label": "Minimum characters",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "max_products",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Maximum products shown",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "max_collections",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "label": "Maximum collections shown",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Background image"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "range",
+      "id": "bg_image_opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "label": "Image opacity",
+      "default": 0.3
+    },
+    {
+      "type": "select",
+      "id": "bg_image_size",
+      "label": "Image size",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Cover"
+        },
+        {
+          "value": "contain",
+          "label": "Contain"
+        },
+        {
+          "value": "auto",
+          "label": "Original"
+        }
+      ],
+      "default": "cover"
+    },
+    {
+      "type": "select",
+      "id": "bg_image_position",
+      "label": "Image position",
+      "options": [
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 300,
+      "max": 1000,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 600
+    },
+    {
+      "type": "range",
+      "id": "input_padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Input padding",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "label": "Border width",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 16,
+      "max": 28,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "input_bg_color",
+      "label": "Input background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "placeholder_color",
+      "label": "Placeholder",
+      "default": "#999999"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "border_focus_color",
+      "label": "Border focus",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "results_bg_color",
+      "label": "Results background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "hover_bg_color",
+      "label": "Hover background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Smart search bar"
+    }
+  ]
+}
 {% endschema %}
