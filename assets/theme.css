@@ -112,11 +112,12 @@ body.altum-body {
   position: relative;
   padding: 6rem 1.5rem 4rem;
   color: #f7f5ec;
-  background-image: url({{ 'altum-hero-bg.jpg' | asset_url }});
+  /* background-image now comes from inline style in HTML */
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
 }
+
 
 /* Dark gradient overlay to keep text readable */
 .altum-home__hero::before {
