@@ -47,7 +47,8 @@
           "settings": {
             "product_list": [
               "core-fleece-pullover-hoodie",
-              "black-rose-oud-candle-8oz-amber-jar"
+              "black-rose-oud-candle-8oz-amber-jar",
+              "non-woven-drawstring-backpack"
             ],
             "images_per_product": 3,
             "image_cycle_speed": 3,
@@ -57,8 +58,8 @@
             "autoplay_speed": 5,
             "show_navigation": true,
             "background_color": "#ffffff",
-            "text_color": "#000000",
-            "price_color": "#000000",
+            "text_color": "#ffffff",
+            "price_color": "#ffffff",
             "padding": 30,
             "image_border_radius": 8,
             "title_size": 16,
