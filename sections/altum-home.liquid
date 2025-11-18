@@ -16,6 +16,48 @@
         <a class="btn btn--secondary" href="/collections/apparel">Explore apparel</a>
       </div>
     </div>
+  <section class="altum-home__catalog">
+    <div class="altum-home__catalog-inner">
+      <div class="altum-home__catalog-header">
+        <h2>Explore the Altum collection</h2>
+        <p>Colorado-made candles, apparel, ski &amp; snowboard racks, climbing gear, and prints that keep you close to the mountains.</p>
+      </div>
+
+      {%- assign front_collection = collections['all'] -%}
+
+      {%- if front_collection and front_collection.products_count > 0 -%}
+        <div class="altum-home__product-grid">
+          {%- for product in front_collection.products limit: 12 -%}
+            <article class="altum-product-card">
+              <a href="{{ product.url }}" class="altum-product-card__link">
+                <div class="altum-product-card__image-wrap">
+                  {%- if product.featured_image -%}
+                    <img
+                      src="{{ product.featured_image | img_url: '600x600' }}"
+                      alt="{{ product.title | escape }}"
+                      loading="lazy">
+                  {%- endif -%}
+                </div>
+                <div class="altum-product-card__body">
+                  <h3 class="altum-product-card__title">{{ product.title }}</h3>
+                  <p class="altum-product-card__price">
+                    {%- if product.compare_at_price_max > product.price -%}
+                      <span class="altum-product-card__price--sale">{{ product.price | money }}</span>
+                      <span class="altum-product-card__price--compare">{{ product.compare_at_price_max | money }}</span>
+                    {%- else -%}
+                      {{ product.price | money }}
+                    {%- endif -%}
+                  </p>
+                </div>
+              </a>
+            </article>
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <p>No products found yet. Add items to your “All” collection in Shopify.</p>
+      {%- endif -%}
+    </div>
+  </section>
 
     <div class="altum-home__hero-card">
       <p class="altum-eyebrow">Key scent</p>
