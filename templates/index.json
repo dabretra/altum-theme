@@ -53,8 +53,8 @@
         "ai_gen_block_e9c7a78_P9774A": {
           "type": "ai_gen_block_e9c7a78",
           "settings": {
-            "spacing_top": 25,
-            "spacing_bottom": 25,
+            "spacing_top": 40,
+            "spacing_bottom": 40,
             "spacing_top_mobile": 10,
             "spacing_bottom_mobile": 10,
             "border_width": 1,
