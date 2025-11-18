@@ -9,34 +9,30 @@
  */
 {
   "sections": {
-    "1763438634f44e698d": {
+    "1763482816c9bec51c": {
       "type": "_blocks",
       "blocks": {
-        "ai_gen_block_87ef166_DgPaeK": {
-          "type": "ai_gen_block_87ef166",
+        "ai_gen_block_e9c7a78_P9774A": {
+          "type": "ai_gen_block_e9c7a78",
           "settings": {
-            "placeholder_text": "Search products...",
-            "max_width": 400,
-            "input_padding": 14,
-            "border_radius": 12,
+            "spacing_top": 30,
+            "spacing_bottom": 30,
+            "spacing_top_mobile": 20,
+            "spacing_bottom_mobile": 20,
             "border_width": 1,
-            "font_size": 14,
-            "icon_size": 18,
-            "background_color": "#ffffff",
-            "text_color": "#000000",
-            "placeholder_color": "#999999",
-            "border_color": "#e0e0e0",
-            "focus_border_color": "#000000",
-            "icon_color": "#666666",
-            "submit_icon_color": "#000000",
-            "submit_icon_hover_color": "#666666"
+            "border_style": "solid",
+            "border_color": "#e0e0e0"
           },
           "blocks": {}
         }
       },
       "block_order": [
-        "ai_gen_block_87ef166_DgPaeK"
+        "ai_gen_block_e9c7a78_P9774A"
       ],
+      "settings": {}
+    },
+    "1763438634f44e698d": {
+      "type": "_blocks",
       "settings": {}
     },
     "17634355345abab831": {
@@ -101,6 +97,7 @@
     }
   },
   "order": [
+    "1763482816c9bec51c",
     "1763438634f44e698d",
     "17634355345abab831",
     "main"
