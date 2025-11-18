@@ -15,41 +15,6 @@
     },
     "blocks_HxA4bP": {
       "type": "_blocks",
-      "blocks": {
-        "ai_gen_block_8b22be3_efxthK": {
-          "type": "ai_gen_block_8b22be3",
-          "settings": {
-            "heading": "Featured products",
-            "subheading": "Discover our latest collection",
-            "heading_alignment": "center",
-            "collection": "altum-merch",
-            "products_limit": 12,
-            "card_width": 280,
-            "product_gap": 20,
-            "show_navigation": true,
-            "background_color": "#ffffff",
-            "heading_color": "#000000",
-            "subheading_color": "#666666",
-            "card_background": "#ffffff",
-            "card_border_color": "#e5e5e5",
-            "product_title_color": "#000000",
-            "product_price_color": "#000000",
-            "nav_button_color": "#000000",
-            "nav_button_hover_color": "#333333",
-            "nav_button_icon_color": "#ffffff",
-            "heading_size": 32,
-            "subheading_size": 16,
-            "product_title_size": 16,
-            "product_price_size": 16,
-            "section_padding": 50,
-            "card_border_radius": 8
-          },
-          "blocks": {}
-        }
-      },
-      "block_order": [
-        "ai_gen_block_8b22be3_efxthK"
-      ],
       "name": "Product slider",
       "settings": {}
     },
