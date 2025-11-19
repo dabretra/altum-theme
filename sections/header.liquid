@@ -1,10 +1,94 @@
-<nav class="altum-nav" aria-label="Main navigation">
-  <a href="{{ routes.root_url }}">Home</a>
-  <a href="{{ routes.all_products_collection_url }}">All Products</a>
-  <a href="/collections/candles">Candles</a>
-  <a href="/collections/apparel">Apparel</a>
-  <a href="/collections/gear">Gear</a>
-  <a href="/collections/racks">Racks</a>
-  <a href="/collections/art">Art</a>
-  <a href="/pages/about">About</a>
-</nav>
+<header class="altum-header">
+  <div class="altum-header_inner">
+
+    {%- comment -%} Brand / logo {%- endcomment -%}
+    <a href="{{ routes.root_url }}" class="altum-header__brand">
+      {% if section.settings.logo != blank %}
+        <img
+          src="{{ section.settings.logo | image_url: width: 180 }}"
+          alt="{{ shop.name | escape }}"
+          class="altum-header__logo"
+        >
+      {% else %}
+        <span class="altum-header__logo-text">
+          {{ section.settings.logo_text | default: shop.name }}
+        </span>
+      {% endif %}
+    </a>
+
+    {%- comment -%} Mobile toggle {%- endcomment -%}
+    <button class="altum-header__toggle"
+      type="button"
+      aria-label="Toggle navigation"
+      aria-expanded="false"
+      aria-controls="altum-main-nav">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    {%- comment -%} Main navigation pulled from Shopify menu {%- endcomment -%}
+    {% assign main_menu = section.settings.menu %}
+
+    <nav id="altum-main-nav" class="altum-nav" aria-label="Main navigation">
+      {% if main_menu != blank %}
+        {% for link in main_menu.links %}
+          {% if link.links != blank %}
+            <div class="altum-nav__item altum-nav__item--has-children">
+              <a href="{{ link.url }}" class="altum-nav__link">
+                {{ link.title }}
+              </a>
+              <div class="altum-nav__dropdown">
+                {% for child_link in link.links %}
+                  <a href="{{ child_link.url }}" class="altum-nav__dropdown-link">
+                    {{ child_link.title }}
+                  </a>
+                {% endfor %}
+              </div>
+            </div>
+          {% else %}
+            <a href="{{ link.url }}" class="altum-nav__link">
+              {{ link.title }}
+            </a>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </nav>
+
+    {%- comment -%} Search & Cart actions {%- endcomment -%}
+    <div class="altum-header__actions">
+      <a href="{{ routes.search_url }}" class="altum-header__action" aria-label="Search">
+        Search
+      </a>
+      <a href="{{ routes.cart_url }}" class="altum-header__action" aria-label="Cart">
+        Cart ({{ cart.item_count }})
+      </a>
+    </div>
+
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image"
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo text (fallback)",
+      "default": "ALTUM"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Main menu",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}
