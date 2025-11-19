@@ -13,7 +13,10 @@
     "sections": {
       "header": {
         "type": "header",
-        "settings": {}
+        "settings": {
+          "logo_text": "ALTUM",
+          "menu": "apparel"
+        }
       },
       "footer": {
         "type": "footer",
