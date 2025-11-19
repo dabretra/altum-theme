@@ -9,23 +9,136 @@
  */
 {
   "sections": {
-    "17634355345abab831": {
+    "1763483363d9c80715": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_936361d_hKtzXk": {
+          "type": "ai_gen_block_936361d",
+          "settings": {
+            "placeholder": "Search products and collections...",
+            "min_chars": 2,
+            "max_products": 5,
+            "max_collections": 3,
+            "background_image": "shopify://shop_images/can-we-take-a-narrow-slice-of-this-image-to-fit-within-the-product-slider-showing-mountain-peaks.png",
+            "bg_image_opacity": 0.3,
+            "bg_image_size": "cover",
+            "bg_image_position": "center",
+            "max_width": 600,
+            "input_padding": 14,
+            "border_radius": 8,
+            "border_width": 1,
+            "font_size": 16,
+            "icon_size": 20,
+            "input_bg_color": "#ffffff",
+            "text_color": "#000000",
+            "placeholder_color": "#999999",
+            "border_color": "#e0e0e0",
+            "border_focus_color": "#000000",
+            "icon_color": "#666666",
+            "results_bg_color": "#ffffff",
+            "hover_bg_color": "#f5f5f5",
+            "link_color": "#000000"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_936361d_hKtzXk"
+      ],
+      "settings": {}
+    },
+    "1763482816c9bec51c": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_e9c7a78_P9774A": {
+          "type": "ai_gen_block_e9c7a78",
+          "settings": {
+            "spacing_top": 40,
+            "spacing_bottom": 40,
+            "spacing_top_mobile": 10,
+            "spacing_bottom_mobile": 10,
+            "border_width": 1,
+            "border_style": "solid",
+            "border_color": "#ffffff"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_e9c7a78_P9774A"
+      ],
+      "settings": {}
+    },
+    "1763438634f44e698d": {
       "type": "_blocks",
       "settings": {}
     },
-    "blocks_HxA4bP": {
+    "17634355345abab831": {
       "type": "_blocks",
-      "name": "Product slider",
+      "blocks": {
+        "ai_gen_block_781882d_r7gDGT": {
+          "type": "ai_gen_block_781882d",
+          "settings": {
+            "products": [
+              "black-rose-oud-candle-8oz-amber-jar",
+              "non-woven-drawstring-backpack",
+              "core-fleece-pullover-hoodie",
+              "aluminum-carabiner-locking-small-screw-sleeve-metolius-element-rated-for-rigging-suspension",
+              "mens-pro-short-black",
+              "suspension-sling-webbing-climbing-straps-webbing-loop",
+              "the-anchor-climbing-gear-rack",
+              "the-ponderosa-ski-wall-rack",
+              "the-reuben-travel-dopp-kit"
+            ],
+            "collection_1": "",
+            "collection_1_limit": 6,
+            "collection_2": "",
+            "collection_2_limit": 6,
+            "collection_3": "",
+            "collection_3_limit": 6,
+            "slides_desktop": 4,
+            "slides_tablet": 3,
+            "slides_mobile": 2,
+            "gap": 16,
+            "max_width": 1200,
+            "autoplay": true,
+            "autoplay_speed": 5,
+            "show_arrows": true,
+            "show_dots": true,
+            "nav_button_color": "#000000",
+            "nav_button_icon_color": "#ffffff",
+            "nav_button_hover_color": "#333333",
+            "dot_color": "#000000",
+            "background_color": "#ffffff",
+            "card_background": "#ffffff",
+            "text_color": "#000000",
+            "price_color": "#000000",
+            "compare_price_color": "#999999",
+            "title_size": 16,
+            "price_size": 16,
+            "padding_vertical": 36,
+            "card_padding": 16,
+            "border_radius": 20
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_781882d_r7gDGT"
+      ],
       "settings": {}
     },
     "main": {
       "type": "altum-home",
+      "custom_css": [],
       "settings": {}
     }
   },
   "order": [
+    "1763483363d9c80715",
+    "1763482816c9bec51c",
+    "1763438634f44e698d",
     "17634355345abab831",
-    "blocks_HxA4bP",
     "main"
   ]
 }

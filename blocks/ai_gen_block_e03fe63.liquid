@@ -1,0 +1,1016 @@
+{% doc %}
+  @prompt
+    Add a product slider above the header to show products, cycling pictures of products and prices. With functionality so that I can switch products being displayed easily., I also want to be able to show mulitple collections of products
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-slider-{{ ai_gen_id }} {
+    width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding }}px 0;
+    overflow: hidden;
+  }
+
+  .ai-product-slider-container-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+  }
+
+  .ai-product-slider-tabs-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+  }
+
+  .ai-product-slider-tab-{{ ai_gen_id }} {
+    padding: 10px 20px;
+    background-color: {{ block.settings.tab_color }};
+    color: {{ block.settings.tab_text_color }};
+    border: none;
+    border-radius: {{ block.settings.tab_border_radius }}px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-product-slider-tab-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.tab_hover_color }};
+  }
+
+  .ai-product-slider-tab-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.tab_active_color }};
+    color: {{ block.settings.tab_active_text_color }};
+  }
+
+  .ai-product-slider-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-product-slider-track-{{ ai_gen_id }} {
+    display: flex;
+    transition: transform 0.5s ease;
+  }
+
+  .ai-product-slider-slide-{{ ai_gen_id }} {
+    min-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding: 20px;
+  }
+
+  .ai-product-slider-image-{{ ai_gen_id }} {
+    flex: 0 0 auto;
+    width: {{ block.settings.image_size }}px;
+    height: {{ block.settings.image_size }}px;
+  }
+
+  .ai-product-slider-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: {{ block.settings.image_border_radius }}px;
+  }
+
+  .ai-product-slider-image-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-product-slider-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+  }
+
+  .ai-product-slider-info-{{ ai_gen_id }} {
+    flex: 1;
+    text-align: center;
+  }
+
+  .ai-product-slider-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    color: {{ block.settings.text_color }};
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+
+  .ai-product-slider-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_size }}px;
+    color: {{ block.settings.price_color }};
+    margin: 0 0 16px;
+    font-weight: 500;
+  }
+
+  .ai-product-slider-link-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-product-slider-link-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+  }
+
+  .ai-product-slider-controls-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .ai-product-slider-button-{{ ai_gen_id }} {
+    background-color: {{ block.settings.control_color }};
+    color: {{ block.settings.control_icon_color }};
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-product-slider-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.control_hover_color }};
+  }
+
+  .ai-product-slider-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .ai-product-slider-dots-{{ ai_gen_id }} {
+    display: flex;
+    gap: 8px;
+  }
+
+  .ai-product-slider-dot-{{ ai_gen_id }} {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: {{ block.settings.dot_color }};
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: background-color 0.3s ease;
+  }
+
+  .ai-product-slider-dot-{{ ai_gen_id }}.active {
+    background-color: {{ block.settings.dot_active_color }};
+  }
+
+  .ai-product-slider-collection-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ai-product-slider-collection-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-product-slider-empty-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+    color: #666;
+  }
+
+  .ai-product-slider-empty-title-{{ ai_gen_id }} {
+    font-size: 18px;
+    margin: 0 0 8px;
+    color: #333;
+  }
+
+  .ai-product-slider-empty-text-{{ ai_gen_id }} {
+    font-size: 14px;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-slider-slide-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .ai-product-slider-image-{{ ai_gen_id }} {
+      width: {{ block.settings.image_size | times: 0.7 }}px;
+      height: {{ block.settings.image_size | times: 0.7 }}px;
+    }
+
+    .ai-product-slider-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.85 }}px;
+    }
+
+    .ai-product-slider-price-{{ ai_gen_id }} {
+      font-size: {{ block.settings.price_size | times: 0.85 }}px;
+    }
+
+    .ai-product-slider-tabs-{{ ai_gen_id }} {
+      gap: 8px;
+    }
+
+    .ai-product-slider-tab-{{ ai_gen_id }} {
+      padding: 8px 16px;
+      font-size: 13px;
+    }
+  }
+{% endstyle %}
+
+<product-slider-{{ ai_gen_id }} class="ai-product-slider-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-product-slider-container-{{ ai_gen_id }}">
+    {% liquid
+      assign collection_1 = block.settings.collection_1
+      assign collection_2 = block.settings.collection_2
+      assign collection_3 = block.settings.collection_3
+      assign collection_4 = block.settings.collection_4
+      
+      assign collections_array = ''
+      assign collection_count = 0
+      
+      if collection_1 != blank
+        assign collections_array = collections_array | append: '1,'
+        assign collection_count = collection_count | plus: 1
+      endif
+      
+      if collection_2 != blank
+        assign collections_array = collections_array | append: '2,'
+        assign collection_count = collection_count | plus: 1
+      endif
+      
+      if collection_3 != blank
+        assign collections_array = collections_array | append: '3,'
+        assign collection_count = collection_count | plus: 1
+      endif
+      
+      if collection_4 != blank
+        assign collections_array = collections_array | append: '4,'
+        assign collection_count = collection_count | plus: 1
+      endif
+      
+      assign has_collections = false
+      if collection_count > 0
+        assign has_collections = true
+      endif
+    %}
+
+    {% if has_collections %}
+      {% if collection_count > 1 %}
+        <div class="ai-product-slider-tabs-{{ ai_gen_id }}">
+          {% if collection_1 != blank %}
+            <button
+              class="ai-product-slider-tab-{{ ai_gen_id }} active"
+              data-collection="1"
+              aria-label="View {{ collection_1.title }}"
+            >
+              {{ collection_1.title }}
+            </button>
+          {% endif %}
+          {% if collection_2 != blank %}
+            <button
+              class="ai-product-slider-tab-{{ ai_gen_id }}"
+              data-collection="2"
+              aria-label="View {{ collection_2.title }}"
+            >
+              {{ collection_2.title }}
+            </button>
+          {% endif %}
+          {% if collection_3 != blank %}
+            <button
+              class="ai-product-slider-tab-{{ ai_gen_id }}"
+              data-collection="3"
+              aria-label="View {{ collection_3.title }}"
+            >
+              {{ collection_3.title }}
+            </button>
+          {% endif %}
+          {% if collection_4 != blank %}
+            <button
+              class="ai-product-slider-tab-{{ ai_gen_id }}"
+              data-collection="4"
+              aria-label="View {{ collection_4.title }}"
+            >
+              {{ collection_4.title }}
+            </button>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if collection_1 != blank %}
+        <div class="ai-product-slider-collection-{{ ai_gen_id }} active" data-collection-id="1">
+          {% if collection_1.products.size > 0 %}
+            <div class="ai-product-slider-wrapper-{{ ai_gen_id }}">
+              <div class="ai-product-slider-track-{{ ai_gen_id }}">
+                {% for product in collection_1.products limit: block.settings.products_limit %}
+                  <div class="ai-product-slider-slide-{{ ai_gen_id }}" data-slide-index="{{ forloop.index0 }}">
+                    <div class="ai-product-slider-image-{{ ai_gen_id }}">
+                      {% if product.featured_image %}
+                        <img
+                          src="{{ product.featured_image | image_url: width: 600 }}"
+                          alt="{{ product.featured_image.alt | escape }}"
+                          loading="lazy"
+                          width="600"
+                          height="600"
+                        >
+                      {% else %}
+                        <div class="ai-product-slider-image-placeholder-{{ ai_gen_id }}">
+                          {{ 'product-1' | placeholder_svg_tag }}
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div class="ai-product-slider-info-{{ ai_gen_id }}">
+                      <h3 class="ai-product-slider-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+                      <div class="ai-product-slider-price-{{ ai_gen_id }}">{{ product.price | money }}</div>
+                      <a href="{{ product.url }}" class="ai-product-slider-link-{{ ai_gen_id }}">
+                        {{ block.settings.button_text }}
+                      </a>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            {% if collection_1.products.size > 1 %}
+              <div class="ai-product-slider-controls-{{ ai_gen_id }}">
+                <button
+                  class="ai-product-slider-button-{{ ai_gen_id }} ai-product-slider-prev-{{ ai_gen_id }}"
+                  aria-label="Previous product"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+
+                <div class="ai-product-slider-dots-{{ ai_gen_id }}">
+                  {% for product in collection_1.products limit: block.settings.products_limit %}
+                    <button
+                      class="ai-product-slider-dot-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+                      data-slide="{{ forloop.index0 }}"
+                      aria-label="Go to product {{ forloop.index }}"
+                    ></button>
+                  {% endfor %}
+                </div>
+
+                <button
+                  class="ai-product-slider-button-{{ ai_gen_id }} ai-product-slider-next-{{ ai_gen_id }}"
+                  aria-label="Next product"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if collection_2 != blank %}
+        <div class="ai-product-slider-collection-{{ ai_gen_id }}" data-collection-id="2">
+          {% if collection_2.products.size > 0 %}
+            <div class="ai-product-slider-wrapper-{{ ai_gen_id }}">
+              <div class="ai-product-slider-track-{{ ai_gen_id }}">
+                {% for product in collection_2.products limit: block.settings.products_limit %}
+                  <div class="ai-product-slider-slide-{{ ai_gen_id }}" data-slide-index="{{ forloop.index0 }}">
+                    <div class="ai-product-slider-image-{{ ai_gen_id }}">
+                      {% if product.featured_image %}
+                        <img
+                          src="{{ product.featured_image | image_url: width: 600 }}"
+                          alt="{{ product.featured_image.alt | escape }}"
+                          loading="lazy"
+                          width="600"
+                          height="600"
+                        >
+                      {% else %}
+                        <div class="ai-product-slider-image-placeholder-{{ ai_gen_id }}">
+                          {{ 'product-1' | placeholder_svg_tag }}
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div class="ai-product-slider-info-{{ ai_gen_id }}">
+                      <h3 class="ai-product-slider-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+                      <div class="ai-product-slider-price-{{ ai_gen_id }}">{{ product.price | money }}</div>
+                      <a href="{{ product.url }}" class="ai-product-slider-link-{{ ai_gen_id }}">
+                        {{ block.settings.button_text }}
+                      </a>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            {% if collection_2.products.size > 1 %}
+              <div class="ai-product-slider-controls-{{ ai_gen_id }}">
+                <button
+                  class="ai-product-slider-button-{{ ai_gen_id }} ai-product-slider-prev-{{ ai_gen_id }}"
+                  aria-label="Previous product"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+
+                <div class="ai-product-slider-dots-{{ ai_gen_id }}">
+                  {% for product in collection_2.products limit: block.settings.products_limit %}
+                    <button
+                      class="ai-product-slider-dot-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+                      data-slide="{{ forloop.index0 }}"
+                      aria-label="Go to product {{ forloop.index }}"
+                    ></button>
+                  {% endfor %}
+                </div>
+
+                <button
+                  class="ai-product-slider-button-{{ ai_gen_id }} ai-product-slider-next-{{ ai_gen_id }}"
+                  aria-label="Next product"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if collection_3 != blank %}
+        <div class="ai-product-slider-collection-{{ ai_gen_id }}" data-collection-id="3">
+          {% if collection_3.products.size > 0 %}
+            <div class="ai-product-slider-wrapper-{{ ai_gen_id }}">
+              <div class="ai-product-slider-track-{{ ai_gen_id }}">
+                {% for product in collection_3.products limit: block.settings.products_limit %}
+                  <div class="ai-product-slider-slide-{{ ai_gen_id }}" data-slide-index="{{ forloop.index0 }}">
+                    <div class="ai-product-slider-image-{{ ai_gen_id }}">
+                      {% if product.featured_image %}
+                        <img
+                          src="{{ product.featured_image | image_url: width: 600 }}"
+                          alt="{{ product.featured_image.alt | escape }}"
+                          loading="lazy"
+                          width="600"
+                          height="600"
+                        >
+                      {% else %}
+                        <div class="ai-product-slider-image-placeholder-{{ ai_gen_id }}">
+                          {{ 'product-1' | placeholder_svg_tag }}
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div class="ai-product-slider-info-{{ ai_gen_id }}">
+                      <h3 class="ai-product-slider-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+                      <div class="ai-product-slider-price-{{ ai_gen_id }}">{{ product.price | money }}</div>
+                      <a href="{{ product.url }}" class="ai-product-slider-link-{{ ai_gen_id }}">
+                        {{ block.settings.button_text }}
+                      </a>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            {% if collection_3.products.size > 1 %}
+              <div class="ai-product-slider-controls-{{ ai_gen_id }}">
+                <button
+                  class="ai-product-slider-button-{{ ai_gen_id }} ai-product-slider-prev-{{ ai_gen_id }}"
+                  aria-label="Previous product"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+
+                <div class="ai-product-slider-dots-{{ ai_gen_id }}">
+                  {% for product in collection_3.products limit: block.settings.products_limit %}
+                    <button
+                      class="ai-product-slider-dot-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+                      data-slide="{{ forloop.index0 }}"
+                      aria-label="Go to product {{ forloop.index }}"
+                    ></button>
+                  {% endfor %}
+                </div>
+
+                <button
+                  class="ai-product-slider-button-{{ ai_gen_id }} ai-product-slider-next-{{ ai_gen_id }}"
+                  aria-label="Next product"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% if collection_4 != blank %}
+        <div class="ai-product-slider-collection-{{ ai_gen_id }}" data-collection-id="4">
+          {% if collection_4.products.size > 0 %}
+            <div class="ai-product-slider-wrapper-{{ ai_gen_id }}">
+              <div class="ai-product-slider-track-{{ ai_gen_id }}">
+                {% for product in collection_4.products limit: block.settings.products_limit %}
+                  <div class="ai-product-slider-slide-{{ ai_gen_id }}" data-slide-index="{{ forloop.index0 }}">
+                    <div class="ai-product-slider-image-{{ ai_gen_id }}">
+                      {% if product.featured_image %}
+                        <img
+                          src="{{ product.featured_image | image_url: width: 600 }}"
+                          alt="{{ product.featured_image.alt | escape }}"
+                          loading="lazy"
+                          width="600"
+                          height="600"
+                        >
+                      {% else %}
+                        <div class="ai-product-slider-image-placeholder-{{ ai_gen_id }}">
+                          {{ 'product-1' | placeholder_svg_tag }}
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div class="ai-product-slider-info-{{ ai_gen_id }}">
+                      <h3 class="ai-product-slider-title-{{ ai_gen_id }}">{{ product.title }}</h3>
+                      <div class="ai-product-slider-price-{{ ai_gen_id }}">{{ product.price | money }}</div>
+                      <a href="{{ product.url }}" class="ai-product-slider-link-{{ ai_gen_id }}">
+                        {{ block.settings.button_text }}
+                      </a>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            {% if collection_4.products.size > 1 %}
+              <div class="ai-product-slider-controls-{{ ai_gen_id }}">
+                <button
+                  class="ai-product-slider-button-{{ ai_gen_id }} ai-product-slider-prev-{{ ai_gen_id }}"
+                  aria-label="Previous product"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                </button>
+
+                <div class="ai-product-slider-dots-{{ ai_gen_id }}">
+                  {% for product in collection_4.products limit: block.settings.products_limit %}
+                    <button
+                      class="ai-product-slider-dot-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
+                      data-slide="{{ forloop.index0 }}"
+                      aria-label="Go to product {{ forloop.index }}"
+                    ></button>
+                  {% endfor %}
+                </div>
+
+                <button
+                  class="ai-product-slider-button-{{ ai_gen_id }} ai-product-slider-next-{{ ai_gen_id }}"
+                  aria-label="Next product"
+                >
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </button>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="ai-product-slider-empty-{{ ai_gen_id }}">
+        <h3 class="ai-product-slider-empty-title-{{ ai_gen_id }}">Product collection slider</h3>
+        <p class="ai-product-slider-empty-text-{{ ai_gen_id }}">Next, add collections to display products</p>
+      </div>
+    {% endif %}
+  </div>
+</product-slider-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ProductSlider{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentSlide = 0;
+        this.autoplayInterval = null;
+        this.currentCollection = null;
+      }
+
+      connectedCallback() {
+        this.tabs = this.querySelectorAll('.ai-product-slider-tab-{{ ai_gen_id }}');
+        this.collections = this.querySelectorAll('.ai-product-slider-collection-{{ ai_gen_id }}');
+        
+        this.currentCollection = this.querySelector('.ai-product-slider-collection-{{ ai_gen_id }}.active');
+        
+        this.setupTabListeners();
+        this.initializeCurrentCollection();
+
+        {% if block.settings.autoplay %}
+          this.startAutoplay();
+        {% endif %}
+      }
+
+      setupTabListeners() {
+        this.tabs.forEach((tab) => {
+          tab.addEventListener('click', (e) => {
+            const collectionId = e.target.dataset.collection;
+            this.switchCollection(collectionId);
+          });
+        });
+      }
+
+      switchCollection(collectionId) {
+        this.stopAutoplay();
+        
+        this.tabs.forEach((tab) => {
+          if (tab.dataset.collection === collectionId) {
+            tab.classList.add('active');
+          } else {
+            tab.classList.remove('active');
+          }
+        });
+
+        this.collections.forEach((collection) => {
+          if (collection.dataset.collectionId === collectionId) {
+            collection.classList.add('active');
+            this.currentCollection = collection;
+          } else {
+            collection.classList.remove('active');
+          }
+        });
+
+        this.currentSlide = 0;
+        this.initializeCurrentCollection();
+
+        {% if block.settings.autoplay %}
+          this.startAutoplay();
+        {% endif %}
+      }
+
+      initializeCurrentCollection() {
+        if (!this.currentCollection) return;
+
+        this.track = this.currentCollection.querySelector('.ai-product-slider-track-{{ ai_gen_id }}');
+        this.slides = this.currentCollection.querySelectorAll('.ai-product-slider-slide-{{ ai_gen_id }}');
+        this.prevButton = this.currentCollection.querySelector('.ai-product-slider-prev-{{ ai_gen_id }}');
+        this.nextButton = this.currentCollection.querySelector('.ai-product-slider-next-{{ ai_gen_id }}');
+        this.dots = this.currentCollection.querySelectorAll('.ai-product-slider-dot-{{ ai_gen_id }}');
+
+        if (this.slides.length === 0) return;
+
+        this.setupEventListeners();
+        this.updateSlider();
+      }
+
+      setupEventListeners() {
+        if (this.prevButton) {
+          this.prevButton.replaceWith(this.prevButton.cloneNode(true));
+          this.prevButton = this.currentCollection.querySelector('.ai-product-slider-prev-{{ ai_gen_id }}');
+          this.prevButton.addEventListener('click', () => this.goToPrevSlide());
+        }
+
+        if (this.nextButton) {
+          this.nextButton.replaceWith(this.nextButton.cloneNode(true));
+          this.nextButton = this.currentCollection.querySelector('.ai-product-slider-next-{{ ai_gen_id }}');
+          this.nextButton.addEventListener('click', () => this.goToNextSlide());
+        }
+
+        this.dots.forEach((dot) => {
+          dot.replaceWith(dot.cloneNode(true));
+        });
+        
+        this.dots = this.currentCollection.querySelectorAll('.ai-product-slider-dot-{{ ai_gen_id }}');
+        this.dots.forEach((dot) => {
+          dot.addEventListener('click', (e) => {
+            const slideIndex = parseInt(e.target.dataset.slide);
+            this.goToSlide(slideIndex);
+          });
+        });
+
+        {% if block.settings.autoplay %}
+          this.addEventListener('mouseenter', () => this.stopAutoplay());
+          this.addEventListener('mouseleave', () => this.startAutoplay());
+        {% endif %}
+      }
+
+      goToSlide(index) {
+        this.currentSlide = index;
+        this.updateSlider();
+      }
+
+      goToPrevSlide() {
+        this.currentSlide = this.currentSlide === 0 ? this.slides.length - 1 : this.currentSlide - 1;
+        this.updateSlider();
+      }
+
+      goToNextSlide() {
+        this.currentSlide = this.currentSlide === this.slides.length - 1 ? 0 : this.currentSlide + 1;
+        this.updateSlider();
+      }
+
+      updateSlider() {
+        if (!this.track || !this.dots) return;
+        
+        const offset = -this.currentSlide * 100;
+        this.track.style.transform = `translateX(${offset}%)`;
+
+        this.dots.forEach((dot, index) => {
+          if (index === this.currentSlide) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+
+      startAutoplay() {
+        const delay = {{ block.settings.autoplay_delay }} * 1000;
+        this.autoplayInterval = setInterval(() => {
+          this.goToNextSlide();
+        }, delay);
+      }
+
+      stopAutoplay() {
+        if (this.autoplayInterval) {
+          clearInterval(this.autoplayInterval);
+          this.autoplayInterval = null;
+        }
+      }
+
+      disconnectedCallback() {
+        this.stopAutoplay();
+      }
+    }
+
+    customElements.define('product-slider-{{ ai_gen_id }}', ProductSlider{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product collection slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Collections"
+    },
+    {
+      "type": "collection",
+      "id": "collection_1",
+      "label": "Collection 1"
+    },
+    {
+      "type": "collection",
+      "id": "collection_2",
+      "label": "Collection 2"
+    },
+    {
+      "type": "collection",
+      "id": "collection_3",
+      "label": "Collection 3"
+    },
+    {
+      "type": "collection",
+      "id": "collection_4",
+      "label": "Collection 4"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "min": 3,
+      "max": 20,
+      "step": 1,
+      "label": "Products per collection",
+      "default": 10
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Button text",
+      "default": "View product"
+    },
+    {
+      "type": "header",
+      "content": "Autoplay"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Enable autoplay",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_delay",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Autoplay delay",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "min": 0,
+      "max": 60,
+      "step": 5,
+      "unit": "px",
+      "label": "Padding",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "min": 100,
+      "max": 400,
+      "step": 20,
+      "unit": "px",
+      "label": "Image size",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 14,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Price size",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f8f8f8"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Button border radius",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Tab style"
+    },
+    {
+      "type": "color",
+      "id": "tab_color",
+      "label": "Tab background",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "tab_text_color",
+      "label": "Tab text",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "tab_hover_color",
+      "label": "Tab hover background",
+      "default": "#d0d0d0"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_color",
+      "label": "Active tab background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_text_color",
+      "label": "Active tab text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "tab_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Tab border radius",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Controls"
+    },
+    {
+      "type": "color",
+      "id": "control_color",
+      "label": "Control background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "control_icon_color",
+      "label": "Control icon",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "control_hover_color",
+      "label": "Control hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "dot_color",
+      "label": "Dot",
+      "default": "#cccccc"
+    },
+    {
+      "type": "color",
+      "id": "dot_active_color",
+      "label": "Active dot",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product collection slider"
+    }
+  ]
+}
+{% endschema %}
