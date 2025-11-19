@@ -116,9 +116,9 @@
             "compare_price_color": "#999999",
             "title_size": 16,
             "price_size": 16,
-            "padding_vertical": 40,
+            "padding_vertical": 36,
             "card_padding": 16,
-            "border_radius": 8
+            "border_radius": 20
           },
           "blocks": {}
         }
